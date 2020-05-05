@@ -1,10 +1,10 @@
 //Global Variables
 var apiKey = "2aa3937301d9ea4d1d3ffd9639357512";
-
+var searchHistory = JSON.parse(localStorage.getItem("cities")) === null ? [] : JSON.parse(localStorage.getItem("cities"));
 
 //Renders the buttons that show previously seached cities. 
 function renderSearchedButtons(cityName) {
-    let buttonSearchedCity = $("<button>");
+    var buttonSearchedCity = $("<button>");
     buttonSearchedCity.addClass("city-button btn btn-light col-12");
     buttonSearchedCity.attr("data-name", cityName);
     buttonSearchedCity.text(cityName);
@@ -64,6 +64,9 @@ function getUV(lat, lon) {
 
 //Creates the Five Day Forecast cards
 function getFiveDay(cityName) {
+    $("#fiveDayForecast").empty();
+    var day = 1;
+
     queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
     console.log(queryURL);
     $.ajax({
@@ -72,41 +75,56 @@ function getFiveDay(cityName) {
     })
         .then(function (response) {
 
-            for (let i = 1; i < 5; i++) {
+            var headerEl = $("<h4>").text("Five Day Forecast");
+            $("#fiveDayForecast").append(headerEl);
+            for (let i = 0; i < response.list.length; i++) {
                 var temperature = response.list[i].main.temp;
                 // console.log("Temp: " + i + temperature);
                 var humidity = response.list[i].main.humidity;
-                var weatherIcon = response.list[i].weather.icon;
-                var date = response.list[i].dt_txt;
-                 console.log("Date: " + i + date);
-
-                var dateEl = $("<h4>").text(date).attr("class","card-title");
-                var tempEl = $("<p>").text("Temp: " + temperature + "°F").attr("class","card-text");
-                var humidEl = $("<p>").text(humidity).attr("class","card-text");
-                var forecastFiveDiv = $("<div>").attr("class", "card text-white bg-info mb-3");
-                forecastFiveDiv.append(dateEl);
-                forecastFiveDiv.append(tempEl);
-                forecastFiveDiv.append(humidEl);
-               
-    
+                var weatherIcon = response.list[i].weather[0].icon;
+                var dateAndTime = response.list[i].dt_txt;
+                var date = dateAndTime.split(" ")[0];
+                var time = dateAndTime.split(" ")[1];
+                // console.log("Date: " + i + date);
+                if (time === "12:00:00") {
+                    var year = date.split("-")[0];
+                    var month = date.split("-")[1];
+                    var day = date.split("-")[2];
+                    var dateEl = $("<h5>").text(month + "/" + day + "/" + year).attr("class", "card-title");
+                    var iconEl = $("<img>").attr("src", "https://api.openweathermap.org/img/w/" + weatherIcon + ".png")
+                    var tempEl = $("<p>").text("Temp: " + temperature + "°F").attr("class", "card-text");
+                    var humidEl = $("<p>").text("Humidity: " + humidity + "%").attr("class", "card-text");
+                    var forecastFiveDiv = $("<div>").attr("class", "card text-white bg-info p-2");
+                    forecastFiveDiv.append(dateEl);
+                    forecastFiveDiv.append(iconEl);
+                    forecastFiveDiv.append(tempEl);
+                    forecastFiveDiv.append(humidEl);
+                    forecastFiveDiv.attr("id", "forecastCard")
+                }
                 $("#fiveDayForecast").append(forecastFiveDiv);
-    
-                
-
-                // <div class="card text-white bg-info mb-3" style="max-width: 18rem;">
-                //     <div class="card-body">
-                //         <h5 class="card-title">Info card title</h5>
-                //         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                //     </div>
-                // </div>
 
             }
 
         })
 }
+function displaySearchHistory() {
+
+    $("#previousSearch").empty();
+    searchHistory.forEach(function (city) {
+
+        //check to see if an entry is already part of search history, and don't add a second version of it
+        console.log(searchHistory);
+        var searchHistoryEL = renderSearchedButtons(searchHistory);
+
+        $("#previousSearch").prepend(searchHistoryEL);
+    });
+    // $(".btn").click(currentWeather);
+    // $(".btn").click(fiveDayForecast);
+
+}
 
 $("#searchButton").on("click", function () {
-
+    $("#forecast").empty();
     cityName = $("#searchinput").val().trim();
     var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
     renderSearchedButtons(cityName);
@@ -117,14 +135,16 @@ $("#searchButton").on("click", function () {
     })
         .then(function (response) {
 
-            console.log(response);
-            // response.data.weather[0].icon
+            console.log(queryURL);
+
             var pulledName = response.city.name;
             var latitude = response.city.coord.lat;
             var longitude = response.city.coord.lon;
             var temperature = response.list[0].main.temp;
             var humidity = response.list[0].main.humidity;
             var windSpeed = response.list[0].wind.speed;
+            var weatherIcon = response.list[0].weather[0].icon;
+            console.log(weatherIcon);
 
             // Creating storing div tag
             var forecastDiv = $("<div>");
@@ -134,10 +154,12 @@ $("#searchButton").on("click", function () {
             var tempEl = $("<p>").text("Temperature: " + temperature + "°F");
             var humidEl = $("<p>").text("Humidity: " + humidity + "%");
             var windEl = $("<p>").text("Wind Speed: " + windSpeed + "MPH");
+            var iconEl = $("<img>").attr("src", "https://api.openweathermap.org/img/w/" + weatherIcon + ".png")
 
 
             //Appending the forecast div
             forecastDiv.append(cityEl);
+            forecastDiv.append(iconEl);
             forecastDiv.append(tempEl);
             forecastDiv.append(humidEl);
             forecastDiv.append(windEl);
