@@ -1,9 +1,19 @@
-.input-group{
+.searchArea {
+    background-color: ghostwhite;
+}
+
+.input-group {
     padding: 10px;
 }
-.city-button{
+
+.city-button {
     background-color: lightgray;
     text-align: center;
+}
 
-    
+#forecast {
+    border-radius: 25px;
+    border: 2px solid ghostwhite;
+    padding: 20px;
+
 }

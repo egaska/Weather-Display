@@ -1,17 +1,11 @@
 
-function buildQueryURL() {
-    cityName = $("#searchinput").val().trim();
-    var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=2aa3937301d9ea4d1d3ffd9639357512";
-    console.log(queryURL);
-    renderButtons(cityName);
-    return queryURL;
-}
+var apiKey = "2aa3937301d9ea4d1d3ffd9639357512";
 
-function pullCityInformation(buildQueryURL){
+function pullCityInformation(buildQueryURL) {
 
 }
 
-function renderButtons(cityName) {
+function renderSearchedButtons(cityName) {
     let buttonSearchedCity = $("<button>");
     buttonSearchedCity.addClass("city-button btn btn-light col-12");
     buttonSearchedCity.attr("data-name", cityName);
@@ -19,6 +13,20 @@ function renderButtons(cityName) {
     $("#previousSearch").append(buttonSearchedCity);
 }
 
+$("#searchButton").on("click", function () {
 
- 
-$("#searchButton").on("click", buildQueryURL);
+    cityName = $("#searchinput").val().trim();
+    var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey;
+    var queryURL_UV =
+    console.log(queryURL);
+    renderSearchedButtons(cityName);
+    console.log("Test")
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+    })
+        .then(function (response) {
+            console.log(response.cod);
+        })
+
+})
