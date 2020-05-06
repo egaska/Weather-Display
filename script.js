@@ -190,7 +190,7 @@ $(".city-button").click(function () {
     $("#forecast").empty();
     cityName = $(this).text();
     console.log("Ran");
-    var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
+    var queryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
     searchedCities.push(cityName);
     localStorage.setItem("cities", JSON.stringify(searchedCities));
     renderSearchedButtons(cityName);
