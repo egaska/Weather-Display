@@ -5,12 +5,12 @@ var searchedCities = [];
 loadSearched();
 console.log(searchedCities);
 
-function loadSearched(){
+function loadSearched() {
     var searchedStorage = localStorage.getItem("cities");
-    if (searchedStorage!== null){
-        searchedCities =JSON.parse(searchedStorage);
+    if (searchedStorage !== null) {
+        searchedCities = JSON.parse(searchedStorage);
     }
-    for (var i = 0; i < searchedCities.length; i++){
+    for (var i = 0; i < searchedCities.length; i++) {
         renderSearchedButtons(searchedCities[i]);
     }
 }
@@ -20,6 +20,7 @@ function renderSearchedButtons(cityName) {
     var buttonSearchedCity = $("<button>");
     buttonSearchedCity.addClass("city-button btn btn-light col-12");
     buttonSearchedCity.attr("data-name", cityName);
+    buttonSearchedCity.attr("id", "cityButton");
     buttonSearchedCity.text(cityName);
     $("#previousSearch").prepend(buttonSearchedCity);
 }
@@ -99,7 +100,7 @@ function getFiveDay(cityName) {
                 var date = dateAndTime.split(" ")[0];
                 var time = dateAndTime.split(" ")[1];
                 // console.log("Date: " + i + date);
-                if (time === "12:00:00") {
+                if (time === "18:00:00") {
                     var year = date.split("-")[0];
                     var month = date.split("-")[1];
                     var day = date.split("-")[2];
@@ -133,9 +134,10 @@ function displaySearchHistory() {
     });
 
 }
-
-$("#searchButton").on("click", function () {
+function search(cityName) {
     $("#forecast").empty();
+
+
     cityName = $("#searchinput").val().trim();
     var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
     searchedCities.push(cityName);
@@ -176,14 +178,63 @@ $("#searchButton").on("click", function () {
             forecastDiv.append(tempEl);
             forecastDiv.append(humidEl);
             forecastDiv.append(windEl);
-            var uvIndex = getUV(latitude, longitude);
+            getUV(latitude, longitude);
 
             $("#forecast").append(forecastDiv);
 
             getFiveDay(cityName);
-
-
-            // var uvIndex =
         })
 
+}
+$(".city-button").click(function () {
+    $("#forecast").empty();
+    cityName = $(this).text();
+    console.log("Ran");
+    var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
+    searchedCities.push(cityName);
+    localStorage.setItem("cities", JSON.stringify(searchedCities));
+    renderSearchedButtons(cityName);
+
+    $.ajax({
+        url: queryURL,
+        method: "GET"
+    })
+        .then(function (response) {
+
+            console.log(localStorage);
+
+            var pulledName = response.city.name;
+            var latitude = response.city.coord.lat;
+            var longitude = response.city.coord.lon;
+            var temperature = response.list[0].main.temp;
+            var humidity = response.list[0].main.humidity;
+            var windSpeed = response.list[0].wind.speed;
+            var weatherIcon = response.list[0].weather[0].icon;
+            console.log(weatherIcon);
+
+            // Creating storing div tag
+            var forecastDiv = $("<div>");
+
+            //Creating tags with the city information
+            var cityEl = $("<h2>").text(pulledName);
+            var tempEl = $("<p>").text("Temperature: " + temperature + "°F");
+            var humidEl = $("<p>").text("Humidity: " + humidity + "%");
+            var windEl = $("<p>").text("Wind Speed: " + windSpeed + "MPH");
+            var iconEl = $("<img>").attr("src", "https://api.openweathermap.org/img/w/" + weatherIcon + ".png")
+
+
+            //Appending the forecast div
+            forecastDiv.append(cityEl);
+            forecastDiv.append(iconEl);
+            forecastDiv.append(tempEl);
+            forecastDiv.append(humidEl);
+            forecastDiv.append(windEl);
+            getUV(latitude, longitude);
+
+            $("#forecast").append(forecastDiv);
+
+            getFiveDay(cityName);
+        })
 })
+
+$("#searchButton").on("click", search);
