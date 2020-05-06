@@ -186,7 +186,7 @@ function search(cityName) {
         })
 
 }
-$(".city-button").click(function () {
+$("#previousSearch").on("click", ".city-button", function () {
     $("#forecast").empty();
     cityName = $(this).text();
     console.log("Ran");
