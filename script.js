@@ -1,6 +1,19 @@
 //Global Variables
 var apiKey = "2aa3937301d9ea4d1d3ffd9639357512";
-var searchHistory = JSON.parse(localStorage.getItem("cities")) === null ? [] : JSON.parse(localStorage.getItem("cities"));
+
+var searchedCities = [];
+loadSearched();
+console.log(searchedCities);
+
+function loadSearched(){
+    var searchedStorage = localStorage.getItem("cities");
+    if (searchedStorage!== null){
+        searchedCities =JSON.parse(searchedStorage);
+    }
+    for (var i = 0; i < searchedCities.length; i++){
+        renderSearchedButtons(searchedCities[i]);
+    }
+}
 
 //Renders the buttons that show previously seached cities. 
 function renderSearchedButtons(cityName) {
@@ -8,7 +21,7 @@ function renderSearchedButtons(cityName) {
     buttonSearchedCity.addClass("city-button btn btn-light col-12");
     buttonSearchedCity.attr("data-name", cityName);
     buttonSearchedCity.text(cityName);
-    $("#previousSearch").append(buttonSearchedCity);
+    $("#previousSearch").prepend(buttonSearchedCity);
 }
 
 //Function to get the UV Index
@@ -28,7 +41,7 @@ function getUV(lat, lon) {
 
             //Assigning variables
             uvIndex = response.value;
-            console.log("UV Index: " + uvIndex);
+            // console.log("UV Index: " + uvIndex);
             //If statment sets the correct color of the p tage based on the UV index rating
             // then appends the div to the HTML
             if (uvIndex >= 11) {
@@ -112,14 +125,12 @@ function displaySearchHistory() {
     $("#previousSearch").empty();
     searchHistory.forEach(function (city) {
 
-        //check to see if an entry is already part of search history, and don't add a second version of it
         console.log(searchHistory);
         var searchHistoryEL = renderSearchedButtons(searchHistory);
+        loadSearched();
 
-        $("#previousSearch").prepend(searchHistoryEL);
+        $("#previousSearch").append(searchHistoryEL);
     });
-    // $(".btn").click(currentWeather);
-    // $(".btn").click(fiveDayForecast);
 
 }
 
@@ -127,6 +138,8 @@ $("#searchButton").on("click", function () {
     $("#forecast").empty();
     cityName = $("#searchinput").val().trim();
     var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
+    searchedCities.push(cityName);
+    localStorage.setItem("cities", JSON.stringify(searchedCities));
     renderSearchedButtons(cityName);
 
     $.ajax({
@@ -135,7 +148,7 @@ $("#searchButton").on("click", function () {
     })
         .then(function (response) {
 
-            console.log(queryURL);
+            console.log(localStorage);
 
             var pulledName = response.city.name;
             var latitude = response.city.coord.lat;
