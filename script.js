@@ -33,7 +33,7 @@ function getUV(lat, lon) {
 
     // Creating storing div tag
     var forecastDiv = $("<div>");
-    var queryURL_UV = "https://api.openweathermap.org/data/2.5/uvi?appid=" + apiKey + "&lat=" + latitude + "&lon=" + longitude;
+    var queryURL_UV = "http://api.openweathermap.org/data/2.5/uvi?appid=" + apiKey + "&lat=" + latitude + "&lon=" + longitude;
     $.ajax({
         url: queryURL_UV,
         method: "GET"
@@ -81,7 +81,7 @@ function getFiveDay(cityName) {
     $("#fiveDayForecast").empty();
     var day = 1;
 
-    queryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
+    queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
     console.log(queryURL);
     $.ajax({
         url: queryURL,
@@ -105,7 +105,7 @@ function getFiveDay(cityName) {
                     var month = date.split("-")[1];
                     var day = date.split("-")[2];
                     var dateEl = $("<h5>").text(month + "/" + day + "/" + year).attr("class", "card-title");
-                    var iconEl = $("<img>").attr("src", "https://api.openweathermap.org/img/w/" + weatherIcon + ".png")
+                    var iconEl = $("<img>").attr("src", "http://api.openweathermap.org/img/w/" + weatherIcon + ".png")
                     var tempEl = $("<p>").text("Temp: " + temperature + "°F").attr("class", "card-text");
                     var humidEl = $("<p>").text("Humidity: " + humidity + "%").attr("class", "card-text");
                     var forecastFiveDiv = $("<div>").attr("class", "card text-white bg-info p-2");
@@ -139,7 +139,7 @@ function search(cityName) {
 
 
     cityName = $("#searchinput").val().trim();
-    var queryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
+    var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
     searchedCities.push(cityName);
     localStorage.setItem("cities", JSON.stringify(searchedCities));
     renderSearchedButtons(cityName);
@@ -190,7 +190,7 @@ $("#previousSearch").on("click", ".city-button", function () {
     $("#forecast").empty();
     cityName = $(this).text();
     console.log("Ran");
-    var queryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
+    var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
     searchedCities.push(cityName);
     localStorage.setItem("cities", JSON.stringify(searchedCities));
     renderSearchedButtons(cityName);
@@ -220,7 +220,7 @@ $("#previousSearch").on("click", ".city-button", function () {
             var tempEl = $("<p>").text("Temperature: " + temperature + "°F");
             var humidEl = $("<p>").text("Humidity: " + humidity + "%");
             var windEl = $("<p>").text("Wind Speed: " + windSpeed + "MPH");
-            var iconEl = $("<img>").attr("src", "https://api.openweathermap.org/img/w/" + weatherIcon + ".png")
+            var iconEl = $("<img>").attr("src", "http://api.openweathermap.org/img/w/" + weatherIcon + ".png")
 
 
             //Appending the forecast div
