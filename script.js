@@ -33,7 +33,7 @@ function getUV(lat, lon) {
 
     // Creating storing div tag
     var forecastDiv = $("<div>");
-    var queryURL_UV = "http://api.openweathermap.org/data/2.5/uvi?appid=" + apiKey + "&lat=" + latitude + "&lon=" + longitude;
+    var queryURL_UV = "https://api.openweathermap.org/data/2.5/uvi?appid=" + apiKey + "&lat=" + latitude + "&lon=" + longitude;
     $.ajax({
         url: queryURL_UV,
         method: "GET"
@@ -81,7 +81,7 @@ function getFiveDay(cityName) {
     $("#fiveDayForecast").empty();
     var day = 1;
 
-    queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
+    queryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
     console.log(queryURL);
     $.ajax({
         url: queryURL,
@@ -139,7 +139,7 @@ function search(cityName) {
 
 
     cityName = $("#searchinput").val().trim();
-    var queryURL = "http://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
+    var queryURL = "https://api.openweathermap.org/data/2.5/forecast?q=" + cityName + "&appid=" + apiKey + "&units=imperial";
     searchedCities.push(cityName);
     localStorage.setItem("cities", JSON.stringify(searchedCities));
     renderSearchedButtons(cityName);
@@ -237,4 +237,11 @@ $("#previousSearch").on("click", ".city-button", function () {
         })
 })
 
+function clearSearch(){
+    localStorage.clear();
+    location.reload();
+    
+}
+
 $("#searchButton").on("click", search);
+$("#clearSearchButton").on("click", clearSearch);
