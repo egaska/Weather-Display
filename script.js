@@ -239,8 +239,7 @@ $("#previousSearch").on("click", ".city-button", function () {
 
 function clearSearch(){
     localStorage.clear();
-    location.reload();
-    
+    location.reload();  
 }
 
 $("#searchButton").on("click", search);
